@@ -37,28 +37,20 @@ for i,e in enumerate(targets):
     onehot_targets[i][e]=1
 
 # 6. Write a generator function, which shuffles the (input, target) pairs
-def shuffle_generator(inputs, targets):
-
+def shuffle_generator(inputs, targets, minibatchsize):
+    """
+        arg: accepts specified minibatch-size, input and target values
+        returns: randomly shuffled input-target pairs in batches of specified size
+    """
+    if len(inputs)%minibatchsize != 0:
+        raise ValueError("not a legal minibatchsize")
     # Generate a random permutation of indices
     indices = np.random.permutation(len(inputs))
-    # suffle pairs with new index but keep pairs intact
-    for index in indices:
-        yield inputs[index], targets[index]
+    # suffle pairs with new minibatch indeces but keep pairs intact
+    for start in range(0, len(inputs), minibatchsize):
+        end = start+minibatchsize
+        indices_of_batch = indices[start:end]
+        yield inputs[indices_of_batch], targets[indices_of_batch]
 
-# 6. Write a generator function, which shuffles the (input, target) pairs
-def shuffle_generator2():
-    
-    # Generate a random permutation of indices
-    indices = np.random.permutation(len(inputs))
-    # suffle pairs with new index but keep pairs intact
-    for index in indices:
-        yield inputs[index], targets[index]
-
-# Create a generator using the shuffle_data_generator function
-# Adjust your generator function to create minibatches: Combine minibatchsize many inputs into a ndarray of shape minibatch size, 64, and targets
-# into a ndarray of shape minibatch size, 10 respectively. Make sure you
-# can adjust your minibatchsize as an argument to this generator, and also
-# that respective (input-target) pairs match with respect to their index in
-# the minibatch
 shuffled_data_generator = shuffle_generator(images_reshaped, onehot_targets)
 
