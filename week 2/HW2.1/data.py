@@ -20,7 +20,7 @@ for i, ax in enumerate(axes.ravel()):
     ax.set_title(f"Digit {targets[i]}")
     ax.axis("off")
 
-#plt.show()
+plt.show()
 
 # 3. Reshape the images into (64) vectors
 images_reshaped = images.reshape(len(images), 64)
@@ -34,10 +34,20 @@ images_reshaped = np.float32(images_reshaped)/16
 # 5. One-hot encode the target digits 
 onehot_targets = np.zeros((len(targets),10))
 for i,e in enumerate(targets):
-    onehot_targets[i][e]=targets[e]
+    onehot_targets[i][e]=1
 
 # 6. Write a generator function, which shuffles the (input, target) pairs
 def shuffle_generator(inputs, targets):
+
+    # Generate a random permutation of indices
+    indices = np.random.permutation(len(inputs))
+    # suffle pairs with new index but keep pairs intact
+    for index in indices:
+        yield inputs[index], targets[index]
+
+# 6. Write a generator function, which shuffles the (input, target) pairs
+def shuffle_generator2():
+    
     # Generate a random permutation of indices
     indices = np.random.permutation(len(inputs))
     # suffle pairs with new index but keep pairs intact
@@ -45,4 +55,10 @@ def shuffle_generator(inputs, targets):
         yield inputs[index], targets[index]
 
 # Create a generator using the shuffle_data_generator function
+# Adjust your generator function to create minibatches: Combine minibatchsize many inputs into a ndarray of shape minibatch size, 64, and targets
+# into a ndarray of shape minibatch size, 10 respectively. Make sure you
+# can adjust your minibatchsize as an argument to this generator, and also
+# that respective (input-target) pairs match with respect to their index in
+# the minibatch
 shuffled_data_generator = shuffle_generator(images_reshaped, onehot_targets)
+
