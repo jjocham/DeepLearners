@@ -37,20 +37,20 @@ for i,e in enumerate(targets):
     onehot_targets[i][e]=1
 
 # 6. Write a generator function, which shuffles the (input, target) pairs
-def shuffle_generator(inputs, targets, minibatchsize):
+def shuffle_generator(inputs, targets, minibatch_size):
     """
         arg: accepts specified minibatch-size, input and target values
-        returns: randomly shuffled input-target pairs in batches of specified size
+        returns: shuffled input-target pairs in batches of size minibatch_sizex64 and minibatch_sizex10
     """
-    if len(inputs)%minibatchsize != 0:
+    if len(inputs)%minibatch_size != 0:
         raise ValueError("not a legal minibatchsize")
     # Generate a random permutation of indices
     indices = np.random.permutation(len(inputs))
     # suffle pairs with new minibatch indeces but keep pairs intact
-    for start in range(0, len(inputs), minibatchsize):
-        end = start+minibatchsize
+    for start in range(0, len(inputs), minibatch_size):
+        end = start+minibatch_size
         indices_of_batch = indices[start:end]
         yield inputs[indices_of_batch], targets[indices_of_batch]
 
-shuffled_data_generator = shuffle_generator(images_reshaped, onehot_targets)
-
+batch_size = 16
+shuffled_data_generator = shuffle_generator(images_reshaped, onehot_targets, batch_size)
