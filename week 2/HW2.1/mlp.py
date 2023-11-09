@@ -29,16 +29,20 @@ class MLP_layer():
         self.weights = weights
         self.bias = biases
 
-    # forward function, which accepts an input of shape minibatchsize, input size,
-    # and outputs an ndarray of shape minibatchsize, num units after applying the
-    # weight matrix, the bias and the activation function.
-    # DO WE NEED TO SPECIFY THE SHAPE OF X?
     def forward(self, x):
         if x.shape != (minibatch_size, self.num_inputs):
             raise AssertionError(f"The input should be of shape ({minibatch_size}, {self.num_inputs}) but you idiot gave me {x.shape}!?")
         pre_activations = self.weights @ x + np.transpose(self.bias)
         activations = self.act_function(pre_activations)
         return activations
+    
+    def weights_backward(self, d_preacts, preacts):
+        d_weights = self.act_function.backwards(preacts)*self.weights*d_preacts
+        d_inputs = d_preacts
+        return d_weights, d_inputs
+    
+    def backward():
+        return
 
 class MLP():
     def __init__(self, num_layers, num_units_for_layers, activation_functions):
