@@ -1,12 +1,10 @@
-from math import exp
 import numpy as np
 from sigmoid import Sigmoid
 from softmax import Softmax
-from data import shuffle_generator
+from data import *
 
 # Parameters
-minibatch_size = 16
-# to fix!!
+batch_size = 16
 shuffled_data_generator = shuffle_generator(images_reshaped, onehot_targets, batch_size)
 input_size = 64
 output_size = 10
@@ -30,14 +28,14 @@ class MLP_layer():
         self.bias = biases
 
     def forward(self, x):
-        if x.shape != (minibatch_size, self.num_inputs):
-            raise AssertionError(f"The input should be of shape ({minibatch_size}, {self.num_inputs}) but you idiot gave me {x.shape}!?")
+        if x.shape != (batch_size, self.num_inputs):
+            raise AssertionError(f"The input should be of shape ({batch_size}, {self.num_inputs}) but you idiot gave me {x.shape}!?")
         pre_activations = self.weights @ x + np.transpose(self.bias)
         activations = self.act_function(pre_activations)
         return activations
     
     def weights_backward(self, d_preacts, preacts):
-        d_weights = self.act_function.backwards(preacts)*self.weights*d_preacts
+        d_weights = self.act_function.backwards(preacts)*np.sum(self.weights, axis=0)*d_preacts
         d_inputs = d_preacts
         return d_weights, d_inputs
     

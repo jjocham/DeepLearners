@@ -51,6 +51,3 @@ def shuffle_generator(inputs, targets, minibatch_size):
         end = start+minibatch_size
         indices_of_batch = indices[start:end]
         yield inputs[indices_of_batch], targets[indices_of_batch]
-
-batch_size = 16
-shuffled_data_generator = shuffle_generator(images_reshaped, onehot_targets, batch_size)
