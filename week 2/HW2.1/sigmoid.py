@@ -1,19 +1,24 @@
 import numpy as np
 from math import exp
 
-class Sigmoid:  
+class Sigmoid:
     def __call__(self, inputs):
+        """
+            initialize an instance of the sigmoid function with
+            input: of ndarray (preactivations) 
+            returns: activations of current layer
+        """
         return 1./(1.+ np.exp(-inputs))
     def backwards(self, preacts, activations, errors):
+        """
+            performs the backwards-step, calculates the derivative of the sigmoid funciton with respect to preactivations 
+            and applies it to the error signal
+            inputs: ndarrays
+            return: jacobian matrix of calculated sigmoid derivative 
+
+        """
+        #applying sigmoid to the pre_activations gives you the activations, 
+        #this simplifies the derivative calculations:
         dvector = activations*(1-activations)*errors
-        jacobian = np.diag(dvector) # idk if that really works
         return dvector
     
-# backward step confuses me it should be a diagonal matrix...
-x = np.array([[-2,5,-3,3],[-4,2,-1,7],[-3,4,-3,2]])
-errors = np.array([[-0.9, 0.2, 0.9, -0.5],[-2, -4, -3, 2],[1, 0.1, 1, 0.2]])
-sig = Sigmoid()
-y = sig(x)
-print(y)
-dx = sig.backwards(x,y,errors)
-print(dx)

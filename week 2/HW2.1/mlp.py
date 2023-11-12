@@ -32,6 +32,11 @@ output_size = 10
 
 class MLP_layer():
     def __init__(self, num_inputs, num_units, activation_function, use_bias=True):
+        """
+            initializes an instance of MLP layer 
+            inputs: needs the # units in the layer, the # units in prev layer, what activation function to use and the bias
+            returns: object of class MLP_layer
+        """
         self.num_inputs = num_inputs
         self.num_units = num_units
         self.use_bias = use_bias
@@ -48,20 +53,34 @@ class MLP_layer():
         self.bias = biases
 
     def forward(self, x):
+        """
+            performs the foward step on the object MLP layer 
+            input: x (activations of previous MLP layer)
+            returns: activation of current layer (input for next layer)
+        """
+        # checks if dimensions are correct
         if x.shape != (batch_size, self.num_inputs):
             raise AssertionError(f"The input should be of shape ({batch_size}, {self.num_inputs}) but you idiot gave me {x.shape}!?")
-        #pre_activations = self.weights @ x + np.transpose(self.bias)
+        # calculates preactivations with the weight matrix and output of prev layer
         pre_activations = np.dot(x, self.weights) + np.transpose(self.bias)
+        # applies activation function to preactivations
         activations = self.act_function(pre_activations)
         
         return activations
     
     def weights_backward(self, d_preacts, preacts):
+        """
+            JONAS KOMMENTIER DAS MAL PLS:)
+        """
         d_weights = self.act_function.backwards(preacts)*np.sum(self.weights, axis=0)*d_preacts
         d_inputs = d_preacts
         return d_weights, d_inputs
     
     def backward(self, error_signal, inputs):
+        """
+            calculates derivative with respect to weights and with respect to inputs
+            returns: the derivatives
+        """
         dL_dW = np.dot(inputs.T, error_signal)
         dL_dinput = np.dot(error_signal, self.weights.T)
         
@@ -69,6 +88,10 @@ class MLP_layer():
 
 class MLP():
     def __init__(self, num_layers, num_units_for_layers, activation_functions):
+        """
+            initialize instance of MLP class with lists of MLP layers
+            inputs: needs # layers, # of units per layer and specified activation function
+        """
         if num_layers != len(num_units_for_layers)-1:
             raise AssertionError(f"You have to specify as many num_units as you got layers!!")
         if set(activation_functions) != {"sigmoid", 'softmax'} and len(activation_functions) == num_layers:
@@ -76,9 +99,15 @@ class MLP():
         self.layer_list = [MLP_layer(num_units_for_layers[l], num_units_for_layers[l+1], activation_functions[l]) for l in range(num_layers)]
         
     def forward(self, x, target):
+        """
+            calculates the forward step on the level of the MLP by calling forward funciton of MLP layers
+            returns: cce loss of the MLP 
+        """
+        # iterate through all MLP layers
         for i in range(len(self.layer_list)):
             x = self.layer_list[i].forward(x)
-            
+
+        # apply the cce loss funciton
         func = Categorical_Cross_Entropy_Loss()
         loss = func(x,target)
         
@@ -86,6 +115,10 @@ class MLP():
         return loss
     
     def get_data_forward(self, data_generator):
+        """
+            functions to get the forward step for every minibatch
+            returns JONAS WAS RETURNTS??? nichts?
+        """
         
         batches = []
         
@@ -100,6 +133,9 @@ class MLP():
             self.forward(batches[i][0], batches[i][1])
             
     def backward(self, x, y):
+        """
+            JONAS KOMMENTIER WAS PLS:) Grüße von Aaron, die ist noch sehr hässlich geschrieben
+        """
         
         layer_info = [{} for _ in range(len(self.layer_list))]
     
