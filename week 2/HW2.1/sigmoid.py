@@ -8,17 +8,19 @@ class Sigmoid:
             input: of ndarray (preactivations) 
             returns: activations of current layer
         """
-        return 1./(1.+ np.exp(-inputs))
+        activations = 1./(1.+ np.exp(-inputs))
+        return activations
+    
     def backwards(self, preacts, activations, errors):
         """
             performs the backwards-step, calculates the derivative of the sigmoid funciton with respect to preactivations 
             and applies it to the error signal
             inputs: ndarrays
-            return: jacobian matrix of calculated sigmoid derivative 
+            return: diagonal jacobian matrix of calculated sigmoid derivative 
 
         """
-        #applying sigmoid to the pre_activations gives you the activations, 
-        #this simplifies the derivative calculations:
-        dvector = activations*(1-activations)*errors
-        return dvector
+        jacobian = errors * activations * (1-activations)
+        return jacobian
+        
+
     

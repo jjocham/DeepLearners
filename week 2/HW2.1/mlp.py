@@ -68,22 +68,24 @@ class MLP_layer():
         
         return activations
     
-    def weights_backward(self, d_preacts, preacts):
+    def weights_backward(self, error_signal, inputs):
         """
-            JONAS KOMMENTIER DAS MAL PLS:)
-        """
-        d_weights = self.act_function.backwards(preacts)*np.sum(self.weights, axis=0)*d_preacts
-        d_inputs = d_preacts
-        return d_weights, d_inputs
-    
-    def backward(self, error_signal, inputs):
-        """
-            calculates derivative with respect to weights and with respect to inputs
-            returns: the derivatives
+            calculate derivative with respect to weights and with respect to inputs
+            returns:Loss w.r.t. weights and Loss w.r.t. inputs of layer
         """
         dL_dW = np.dot(inputs.T, error_signal)
         dL_dinput = np.dot(error_signal, self.weights.T)
-        
+        return dL_dW, dL_dinput
+    
+    def backward(self, d_preacts, preacts):
+        """
+            calculates derivative of the layer
+            returns: the derivative for the layer
+            THIS IS NOT WORKING PROPERLY
+            we are confused about that the sigmoid backward should return a diagonal but ours doesn't
+        """
+        dL_dpreacts = self.act_function.backwards(preacts)
+        dL_dW, dL_dinput = self.weights_backward(dL_dpreacts)
         return dL_dW, dL_dinput
 
 class MLP():
@@ -116,8 +118,7 @@ class MLP():
     
     def get_data_forward(self, data_generator):
         """
-            functions to get the forward step for every minibatch
-            returns JONAS WAS RETURNTS??? nichts?
+            function to get the right data and initialize forward step for every minibatch
         """
         
         batches = []
@@ -132,12 +133,22 @@ class MLP():
         for i in range(len(batches)):
             self.forward(batches[i][0], batches[i][1])
             
-    def backward(self, x, y):
+    def backward(self):
         """
-            JONAS KOMMENTIER WAS PLS:) Grüße von Aaron, die ist noch sehr hässlich geschrieben
+            gradients should get stored here and weights updated
+            THIS IS NOT WORKING PROPERLY
+            we are confused about this dictionary beeing instantiated here but needs to be fed in the forward step!?
         """
-        
         layer_info = [{} for _ in range(len(self.layer_list))]
+        # Forward step !? store activations here
+        # MISSING
+        # Backward step, store gradients here
+        for layer in self.layer_list:
+            pass
+            # MISSING
+        # Update weights
+        for layer, info in zip(self.layer_list, layer_info):
+            layer.set_weights(info)
     
     
 #create MLP
@@ -145,5 +156,3 @@ my_cute_mlp = MLP(2, [input_size,16,output_size], ["sigmoid", "softmax"])
 
 #use MLP forward
 my_cute_mlp.get_data_forward(shuffled_data_generator)
-
-
